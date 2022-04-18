@@ -7,7 +7,6 @@ dev:
 
 build:
 	CGO_ENABLED=1 GOOS=$(TAROS) GOARCH=$(ARCH) go build -ldflags "-s -w"
-	upx -9 $(APP)
 	docker build -f $(DOCKER_FILE) -t boxsnakefork/$(APP):$(IMAGE_TAG) .
 	docker push boxsnakefork/$(APP):$(IMAGE_TAG)
 	rm -r $(APP)
