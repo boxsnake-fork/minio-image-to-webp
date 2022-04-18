@@ -1,11 +1,13 @@
 APP=minio-image-to-webp
-IMAGE_TAG=$(shell git log --pretty=format:"%ad_%h" -1 --date=short)
+IMAGE_TAG=$(TAROS)-$(ARCH)
+DOCKER_FILE=Dockerfile.$(IMAGE_TAG)
+
 dev:
-	CGO_ENABLED=1 REDIS_ADDRESS=domain.local:6379 go run main.go
+	CGO_ENABLED=1 GOOS=$(TAROS) GOARCH=$(ARCH) REDIS_ADDRESS=domain.local:6379 go run main.go
 
 build:
-	CGO_ENABLED=1 go build -ldflags "-s -w"
+	CGO_ENABLED=1 GOOS=$(TAROS) GOARCH=$(ARCH) go build -ldflags "-s -w"
 	upx -9 $(APP)
-	docker build -t 9d77v/$(APP):$(IMAGE_TAG) .
-	docker push 9d77v/$(APP):$(IMAGE_TAG)
+	docker build -f $(DOCKER_FILE) -t boxsnakefork/$(APP):$(IMAGE_TAG) .
+	docker push boxsnakefork/$(APP):$(IMAGE_TAG)
 	rm -r $(APP)
